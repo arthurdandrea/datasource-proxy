@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.ExecutionInfoBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.ParameterReplacer;
@@ -160,29 +160,33 @@ public class PreparedStatementProxyLogic {
         }
 
         final QueryExecutionListener listener = interceptorHolder.getListener();
-        listener.beforeQuery(new ExecutionInfo(dataSourceName, this.ps, isBatchExecution, batchSize, method, args), queries);
+        final ExecutionInfoBuilder execInfoBuilder = ExecutionInfoBuilder.create()
+                .dataSourceName(dataSourceName)
+                .batch(isBatchExecution)
+                .batchSize(batchSize)
+                .method(method)
+                .methodArgs(args)
+                .statement(ps);
+        listener.beforeQuery(execInfoBuilder.build(), queries);
 
         // Invoke method on original Statement.
-        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, this.ps, isBatchExecution, batchSize, method, args);
-
         try {
             final long beforeTime = System.currentTimeMillis();
 
             Object retVal = method.invoke(ps, args);
 
             final long afterTime = System.currentTimeMillis();
-
-            execInfo.setResult(retVal);
-            execInfo.setElapsedTime(afterTime - beforeTime);
-            execInfo.setSuccess(true);
+            execInfoBuilder.result(retVal);
+            execInfoBuilder.elapsedTime(afterTime - beforeTime);
+            execInfoBuilder.success(true);
 
             return retVal;
         } catch (InvocationTargetException ex) {
-            execInfo.setThrowable(ex.getTargetException());
-            execInfo.setSuccess(false);
+            execInfoBuilder.throwable(ex.getTargetException());
+            execInfoBuilder.success(false);
             throw ex.getTargetException();
         } finally {
-            listener.afterQuery(execInfo, queries);
+            listener.afterQuery(execInfoBuilder.build(), queries);
         }
     }
 

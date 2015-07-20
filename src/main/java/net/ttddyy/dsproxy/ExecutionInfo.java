@@ -9,110 +9,75 @@ import java.sql.Statement;
  * @author Tadaya Tsuyukubo
  */
 public class ExecutionInfo {
-    private String dataSourceName;
-    private Method method;
-    private Object[] methodArgs;
-    private Object result;
-    private long elapsedTime;
-    private Throwable throwable;
-    private StatementType statementType;
-    private boolean isSuccess;
-    private boolean isBatch;
-    private int batchSize;
-    private Statement statement;
+    private final String dataSourceName;
+    private final Method method;
+    private final Object[] methodArgs;
+    private final Object result;
+    private final long elapsedTime;
+    private final Throwable throwable;
+    private final StatementType statementType;
+    private final boolean isSuccess;
+    private final boolean isBatch;
+    private final int batchSize;
+    private final Statement statement;
 
-    public ExecutionInfo() {
+    public ExecutionInfo(String dataSourceName, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs, long elapsedTime, Object result, Throwable throwable, boolean isSuccess) {
+        this(dataSourceName, statement, isBatch, batchSize, method, methodArgs, elapsedTime, result, throwable, isSuccess, StatementType.valueOf(statement));
     }
 
-    public ExecutionInfo(String dataSourceName, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs) {
+    public ExecutionInfo(String dataSourceName, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs, long elapsedTime, Object result, Throwable throwable, boolean isSuccess, StatementType statementType) {
         this.dataSourceName = dataSourceName;
         this.statement = statement;
         this.isBatch = isBatch;
         this.batchSize = batchSize;
         this.method = method;
         this.methodArgs = methodArgs;
-
-        this.statementType = StatementType.valueOf(statement);
+        this.result = result;
+        this.elapsedTime = elapsedTime;
+        this.throwable = throwable;
+        this.isSuccess = isSuccess;
+        this.statementType = statementType;
     }
+
 
     public Method getMethod() {
         return method;
-    }
-
-    public void setMethod(Method method) {
-        this.method = method;
     }
 
     public Object[] getMethodArgs() {
         return methodArgs;
     }
 
-    public void setMethodArgs(Object[] methodArgs) {
-        this.methodArgs = methodArgs;
-    }
-
     public String getDataSourceName() {
         return dataSourceName;
-    }
-
-    public void setDataSourceName(String dataSourceName) {
-        this.dataSourceName = dataSourceName;
     }
 
     public Object getResult() {
         return result;
     }
 
-    public void setResult(Object result) {
-        this.result = result;
-    }
-
     public long getElapsedTime() {
         return elapsedTime;
-    }
-
-    public void setElapsedTime(long elapsedTime) {
-        this.elapsedTime = elapsedTime;
     }
 
     public Throwable getThrowable() {
         return throwable;
     }
 
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
-    }
-
     public StatementType getStatementType() {
         return statementType;
-    }
-
-    public void setStatementType(StatementType statementType) {
-        this.statementType = statementType;
     }
 
     public boolean isSuccess() {
         return isSuccess;
     }
 
-    public void setSuccess(boolean isSuccess) {
-        this.isSuccess = isSuccess;
-    }
-
     public boolean isBatch() {
         return isBatch;
     }
 
-    public void setBatch(boolean isBatch) {
-        this.isBatch = isBatch;
-    }
-
     public int getBatchSize() {
         return batchSize;
-    }
-
-    public void setBatchSize(int batchSize) {
-        this.batchSize = batchSize;
     }
 
     /**
@@ -124,9 +89,5 @@ public class ExecutionInfo {
      */
     public Statement getStatement() {
         return statement;
-    }
-
-    public void setStatement(Statement statement) {
-        this.statement = statement;
     }
 }

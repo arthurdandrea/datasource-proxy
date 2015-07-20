@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy;
 
 import java.lang.reflect.Method;
+import java.sql.Statement;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -17,6 +18,8 @@ public class ExecutionInfoBuilder {
     private boolean success;
     private boolean batch;
     private int batchSize;
+    private Statement statement;
+    private boolean statementTypeSet;
 
     public static ExecutionInfoBuilder create() {
         return new ExecutionInfoBuilder();
@@ -52,8 +55,14 @@ public class ExecutionInfoBuilder {
         return this;
     }
 
+    public ExecutionInfoBuilder statement(Statement statement) {
+        this.statement = statement;
+        return this;
+    }
+
     public ExecutionInfoBuilder statementType(StatementType statementType) {
         this.statementType = statementType;
+        statementTypeSet = true;
         return this;
     }
 
@@ -72,19 +81,8 @@ public class ExecutionInfoBuilder {
         return this;
     }
 
-
     public ExecutionInfo build() {
-        ExecutionInfo executionInfo = new ExecutionInfo();
-        executionInfo.setDataSourceName(dataSourceName);
-        executionInfo.setMethod(method);
-        executionInfo.setMethodArgs(methodArgs);
-        executionInfo.setResult(result);
-        executionInfo.setElapsedTime(elapsedTime);
-        executionInfo.setThrowable(throwable);
-        executionInfo.setStatementType(statementType);
-        executionInfo.setSuccess(success);
-        executionInfo.setBatch(batch);
-        executionInfo.setBatchSize(batchSize);
-        return executionInfo;
+        StatementType statementType = statementTypeSet ? this.statementType : StatementType.valueOf(statement);
+        return new ExecutionInfo(dataSourceName, statement, batch, batchSize, method, methodArgs, elapsedTime, result, throwable, success, statementType);
     }
 }

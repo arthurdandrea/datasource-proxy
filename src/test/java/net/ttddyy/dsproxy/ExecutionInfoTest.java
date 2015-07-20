@@ -22,13 +22,13 @@ public class ExecutionInfoTest {
         CallableStatement callable = mock(CallableStatement.class);
 
         ExecutionInfo executionInfo;
-        executionInfo = new ExecutionInfo("", statement, true, 0, null, null);
+        executionInfo = new ExecutionInfo("", statement, true, 0, null, null, 0, null, null, true);
         assertThat(executionInfo.getStatementType()).isEqualTo(StatementType.STATEMENT);
 
-        executionInfo = new ExecutionInfo("", prepared, true, 0, null, null);
+        executionInfo = new ExecutionInfo("", prepared, true, 0, null, null, 0, null, null, true);
         assertThat(executionInfo.getStatementType()).isEqualTo(StatementType.PREPARED);
 
-        executionInfo = new ExecutionInfo("", callable, true, 0, null, null);
+        executionInfo = new ExecutionInfo("", callable, true, 0, null, null, 0, null, null, true);
         assertThat(executionInfo.getStatementType()).isEqualTo(StatementType.CALLABLE);
 
     }
