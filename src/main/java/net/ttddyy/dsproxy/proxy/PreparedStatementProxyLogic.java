@@ -172,12 +172,15 @@ public class PreparedStatementProxyLogic {
         // Invoke method on original Statement.
         try {
             final long beforeTime = System.currentTimeMillis();
+            Object retVal;
+            try {
+                retVal = method.invoke(ps, args);
+            } finally {
+                final long afterTime = System.currentTimeMillis();
+                execInfoBuilder.elapsedTime(afterTime - beforeTime);
+            }
 
-            Object retVal = method.invoke(ps, args);
-
-            final long afterTime = System.currentTimeMillis();
             execInfoBuilder.result(retVal);
-            execInfoBuilder.elapsedTime(afterTime - beforeTime);
             execInfoBuilder.success(true);
 
             return retVal;
