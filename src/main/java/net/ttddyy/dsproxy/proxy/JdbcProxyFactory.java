@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.TimeProvider;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 
 import javax.sql.DataSource;
@@ -25,6 +26,8 @@ public interface JdbcProxyFactory {
     ConnectionProxy createConnection(Connection connection, InterceptorHolder interceptorHolder);
 
     ConnectionProxy createConnection(Connection connection, InterceptorHolder interceptorHolder, String dataSourceName);
+
+    ConnectionProxy createConnection(Connection connection, InterceptorHolder interceptorHolder, String dataSourceName, TimeProvider timeProvider);
 
     Statement createStatement(Statement statement, ConnectionProxy connectionProxy);
 

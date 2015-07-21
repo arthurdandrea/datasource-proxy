@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
+import net.ttddyy.dsproxy.CurrentTimeProvider;
+import net.ttddyy.dsproxy.TimeProvider;
 import net.ttddyy.dsproxy.proxy.ConnectionProxy;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
@@ -31,9 +33,14 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
     }
 
     public ConnectionProxy createConnection(Connection connection, InterceptorHolder interceptorHolder, String dataSourceName) {
+        return createConnection(connection, interceptorHolder, dataSourceName, CurrentTimeProvider.INSTANCE);
+    }
+
+    @Override
+    public ConnectionProxy createConnection(Connection connection, InterceptorHolder interceptorHolder, String dataSourceName, TimeProvider timeProvider) {
         return (ConnectionProxy) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ConnectionProxy.class},
-                new ConnectionInvocationHandler(connection, interceptorHolder, dataSourceName, this));
+                new ConnectionInvocationHandler(connection, interceptorHolder, dataSourceName, timeProvider, this));
     }
 
     @Override

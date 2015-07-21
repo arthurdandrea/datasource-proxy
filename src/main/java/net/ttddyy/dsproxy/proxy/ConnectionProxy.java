@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.TimeProvider;
+
 import java.sql.Connection;
 
 /**
@@ -7,4 +9,5 @@ import java.sql.Connection;
  */
 public interface ConnectionProxy extends Connection, ProxyJdbcObject, DataSourceNameAware {
     InterceptorHolder getInterceptorHolder();
+    TimeProvider getTimeProvider();
 }

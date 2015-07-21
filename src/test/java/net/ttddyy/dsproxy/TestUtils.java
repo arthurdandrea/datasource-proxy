@@ -61,6 +61,7 @@ public class TestUtils {
         ConnectionProxy mock = mock(ConnectionProxy.class);
         when(mock.getInterceptorHolder()).thenReturn(interceptorHolder);
         when(mock.getDataSourceName()).thenReturn(dataSourceName);
+        when(mock.getTimeProvider()).thenReturn(CurrentTimeProvider.INSTANCE);
         return mock;
     }
 }

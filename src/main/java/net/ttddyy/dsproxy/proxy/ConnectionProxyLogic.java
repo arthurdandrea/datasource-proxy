@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.TimeProvider;
 import net.ttddyy.dsproxy.transform.TransformInfo;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,13 +29,15 @@ public class ConnectionProxyLogic {
     private final Connection connection;
     private final InterceptorHolder interceptorHolder;
     private final String dataSourceName;
+    private final TimeProvider timeProvider;
     private final JdbcProxyFactory jdbcProxyFactory;
 
     public ConnectionProxyLogic(
-            Connection connection, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
+            Connection connection, InterceptorHolder interceptorHolder, String dataSourceName, TimeProvider timeProvider, JdbcProxyFactory jdbcProxyFactory) {
         this.connection = connection;
         this.interceptorHolder = interceptorHolder;
         this.dataSourceName = dataSourceName;
+        this.timeProvider = timeProvider;
         this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
@@ -56,6 +59,8 @@ public class ConnectionProxyLogic {
             return connection;
         } else if ("getInterceptorHolder".equals(methodName)) {
             return interceptorHolder;
+        } else if ("getTimeProvider".equals(methodName)) {
+            return timeProvider;
         }
 
         if (JDBC4_METHODS.contains(methodName)) {

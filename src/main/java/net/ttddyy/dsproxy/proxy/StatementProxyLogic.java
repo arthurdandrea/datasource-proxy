@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ExecutionInfoBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.TimeProvider;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import net.ttddyy.dsproxy.transform.TransformInfo;
@@ -144,13 +145,14 @@ public class StatementProxyLogic {
 
         // Invoke method on original Statement.
         try {
-            final long beforeTime = System.currentTimeMillis();
+            final TimeProvider timeProvider = connectionProxy.getTimeProvider();
+            final long beforeTime = timeProvider.getCurrentTime();
             Object retVal;
             try {
                 retVal = method.invoke(stmt, args);
             } finally {
-                final long afterTime = System.currentTimeMillis();
-                execInfoBuilder.elapsedTime(afterTime - beforeTime, TimeUnit.MILLISECONDS);
+                final long afterTime = timeProvider.getCurrentTime();
+                execInfoBuilder.elapsedTime(afterTime - beforeTime, timeProvider.getTimeUnit());
             }
 
             execInfoBuilder.result(retVal);
