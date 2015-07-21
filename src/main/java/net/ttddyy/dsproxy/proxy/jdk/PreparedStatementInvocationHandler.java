@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.ConnectionProxy;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.PreparedStatementProxyLogic;
@@ -17,15 +18,10 @@ import java.sql.PreparedStatement;
  */
 public class PreparedStatementInvocationHandler implements InvocationHandler {
 
-    private PreparedStatementProxyLogic delegate;
+    private final PreparedStatementProxyLogic delegate;
 
-    public PreparedStatementInvocationHandler(PreparedStatement ps, String query) {
-        delegate = new PreparedStatementProxyLogic(ps, query, new InterceptorHolder(QueryExecutionListener.DEFAULT, QueryTransformer.DEFAULT), "", JdbcProxyFactory.DEFAULT);
-    }
-
-    public PreparedStatementInvocationHandler(
-            PreparedStatement ps, String query, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
-        delegate = new PreparedStatementProxyLogic(ps, query, interceptorHolder, dataSourceName, jdbcProxyFactory);
+    public PreparedStatementInvocationHandler(PreparedStatement ps, String query, ConnectionProxy connectionProxy) {
+        delegate = new PreparedStatementProxyLogic(ps, query, connectionProxy);
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

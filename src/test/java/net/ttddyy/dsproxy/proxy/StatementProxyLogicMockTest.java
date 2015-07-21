@@ -2,9 +2,9 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
-import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -423,7 +423,7 @@ public class StatementProxyLogicMockTest {
 
     private StatementProxyLogic getProxyLogic(Statement statement, QueryExecutionListener listener) {
         InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
-        return new StatementProxyLogic(statement, interceptorHolder, DS_NAME, new JdkJdbcProxyFactory());
+        return new StatementProxyLogic(statement, TestUtils.mockConnectionProxy(interceptorHolder, DS_NAME));
     }
 
     @SuppressWarnings("unchecked")
@@ -727,30 +727,17 @@ public class StatementProxyLogicMockTest {
 
     @Test
     public void testGetConnection() throws Throwable {
-        Connection conn = mock(Connection.class);
         Statement stmt = mock(Statement.class);
 
-        when(stmt.getConnection()).thenReturn(conn);
-        StatementProxyLogic logic = getProxyLogic(stmt, null);
+        InterceptorHolder interceptorHolder = new InterceptorHolder(null, QueryTransformer.DEFAULT);
+        ConnectionProxy connectionProxy = TestUtils.mockConnectionProxy(interceptorHolder, DS_NAME);
+        StatementProxyLogic logic = new StatementProxyLogic(stmt, connectionProxy);
 
         Method method = Statement.class.getMethod("getConnection");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(Connection.class)));
-        verify(stmt).getConnection();
-
-        assertThat(Proxy.isProxyClass(result.getClass()), is(true));
-
-        InvocationHandler handler = Proxy.getInvocationHandler(result);
-        assertThat(handler, is(instanceOf(ConnectionInvocationHandler.class)));
-
-        assertThat(result, is(instanceOf(ProxyJdbcObject.class)));
-        Object obj = ((ProxyJdbcObject) result).getTarget();
-
-        assertThat(obj, is(instanceOf(Connection.class)));
-        Connection resultConn = (Connection) obj;
-        assertThat(resultConn, is(sameInstance(conn)));
-
+        assertThat(result, is(sameInstance((Object) connectionProxy)));
+        verify(stmt, never()).getConnection();
     }
 
 }

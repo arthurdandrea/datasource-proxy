@@ -1,11 +1,16 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.proxy.ConnectionProxy;
+import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import org.hsqldb.jdbc.JDBCDataSource;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -46,5 +51,16 @@ public class TestUtils {
         rs.next();
         conn.close();
         return rs.getInt(1);
+    }
+
+    public static ConnectionProxy mockConnectionProxy(String dataSourceName) {
+        return mockConnectionProxy(new InterceptorHolder(), dataSourceName);
+    }
+
+    public static ConnectionProxy mockConnectionProxy(InterceptorHolder interceptorHolder, String dataSourceName) {
+        ConnectionProxy mock = mock(ConnectionProxy.class);
+        when(mock.getInterceptorHolder()).thenReturn(interceptorHolder);
+        when(mock.getDataSourceName()).thenReturn(dataSourceName);
+        return mock;
     }
 }

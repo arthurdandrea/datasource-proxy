@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
+import net.ttddyy.dsproxy.proxy.ConnectionProxy;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
@@ -25,44 +26,35 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
                 new DataSourceInvocationHandler(dataSource, interceptorHolder, dataSourceName, this));
     }
 
-    public Connection createConnection(Connection connection, InterceptorHolder interceptorHolder) {
+    public ConnectionProxy createConnection(Connection connection, InterceptorHolder interceptorHolder) {
         return createConnection(connection, interceptorHolder, "");
     }
 
-    public Connection createConnection(Connection connection, InterceptorHolder interceptorHolder, String dataSourceName) {
-        return (Connection) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
-                new Class[]{ProxyJdbcObject.class, Connection.class},
+    public ConnectionProxy createConnection(Connection connection, InterceptorHolder interceptorHolder, String dataSourceName) {
+        return (ConnectionProxy) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
+                new Class[]{ConnectionProxy.class},
                 new ConnectionInvocationHandler(connection, interceptorHolder, dataSourceName, this));
     }
 
-    public Statement createStatement(Statement statement, InterceptorHolder interceptorHolder) {
-        return createStatement(statement, interceptorHolder, "");
-    }
-
-    public Statement createStatement(Statement statement, InterceptorHolder interceptorHolder, String dataSourceName) {
+    @Override
+    public Statement createStatement(Statement statement, ConnectionProxy connectionProxy) {
         return (Statement) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, Statement.class},
-                new StatementInvocationHandler(statement, interceptorHolder, dataSourceName, this));
+                new StatementInvocationHandler(statement, connectionProxy));
     }
 
-    public PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query,
-                                                     InterceptorHolder interceptorHolder) {
-        return createPreparedStatement(preparedStatement, query, interceptorHolder, "");
-    }
-
-    public PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query,
-                                                     InterceptorHolder interceptorHolder, String dataSourceName) {
+    @Override
+    public PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, ConnectionProxy connectionProxy) {
         return (PreparedStatement) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, PreparedStatement.class},
-                new PreparedStatementInvocationHandler(
-                        preparedStatement, query, interceptorHolder, dataSourceName, this));
+                new PreparedStatementInvocationHandler(preparedStatement, query, connectionProxy));
+
     }
 
-    public CallableStatement createCallableStatement(CallableStatement callableStatement, String query,
-                                                     InterceptorHolder interceptorHolder, String dataSourceName) {
+    @Override
+    public CallableStatement createCallableStatement(CallableStatement callableStatement, String query, ConnectionProxy connectionProxy) {
         return (CallableStatement) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, CallableStatement.class},
-                new CallableStatementInvocationHandler(
-                        callableStatement, query, interceptorHolder, dataSourceName, this));
+                new CallableStatementInvocationHandler(callableStatement, query, connectionProxy));
     }
 }

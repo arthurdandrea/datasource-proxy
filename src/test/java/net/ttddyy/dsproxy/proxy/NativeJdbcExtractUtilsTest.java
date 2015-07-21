@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.Mockito.mock;
 
+import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.junit.Test;
 
@@ -35,7 +36,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetStatement() {
         Statement source = mock(Statement.class);
-        Statement proxy = new JdkJdbcProxyFactory().createStatement(source, null);
+        Statement proxy = new JdkJdbcProxyFactory().createStatement(source, TestUtils.mockConnectionProxy("my-ds"));
 
         // check proxy
         Statement result = NativeJdbcExtractUtils.getStatement(proxy);
@@ -49,7 +50,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetPreparedStatement() {
         PreparedStatement source = mock(PreparedStatement.class);
-        PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(source, null, null);
+        PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(source, null, TestUtils.mockConnectionProxy("my-ds"));
 
         // check proxy
         PreparedStatement result = NativeJdbcExtractUtils.getPreparedStatement(proxy);
@@ -63,7 +64,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetCallableStatement() {
         CallableStatement source = mock(CallableStatement.class);
-        CallableStatement proxy = new JdkJdbcProxyFactory().createCallableStatement(source, null, null, null);
+        CallableStatement proxy = new JdkJdbcProxyFactory().createCallableStatement(source, null, TestUtils.mockConnectionProxy("my-ds"));
 
         // check proxy
         CallableStatement result = NativeJdbcExtractUtils.getCallableStatement(proxy);

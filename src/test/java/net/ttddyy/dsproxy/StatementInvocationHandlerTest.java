@@ -16,6 +16,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 
 
 /**
@@ -44,7 +45,7 @@ public class StatementInvocationHandlerTest {
         Connection connection = jdbcDataSource.getConnection();
         Statement stmt = connection.createStatement();
 
-        statement = new JdkJdbcProxyFactory().createStatement(stmt, interceptorHolder);
+        statement = new JdkJdbcProxyFactory().createStatement(stmt, TestUtils.mockConnectionProxy(interceptorHolder, "my-ds"));
     }
 
     @After

@@ -25,13 +25,10 @@ public class ConnectionProxyLogic {
             new HashSet<String>(Arrays.asList("unwrap", "isWrapperFor"))
     );
 
-    private Connection connection;
-    private InterceptorHolder interceptorHolder;
-    private String dataSourceName;
-    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
-
-    public ConnectionProxyLogic() {
-    }
+    private final Connection connection;
+    private final InterceptorHolder interceptorHolder;
+    private final String dataSourceName;
+    private final JdbcProxyFactory jdbcProxyFactory;
 
     public ConnectionProxyLogic(
             Connection connection, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
@@ -41,7 +38,7 @@ public class ConnectionProxyLogic {
         this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
-    public Object invoke(Method method, Object[] args) throws Throwable {
+    public Object invoke(ConnectionProxy proxy, Method method, Object[] args) throws Throwable {
 
         final String methodName = method.getName();
 
@@ -57,6 +54,8 @@ public class ConnectionProxyLogic {
         } else if ("getTarget".equals(methodName)) {
             // ProxyJdbcObject interface has method to return original object.
             return connection;
+        } else if ("getInterceptorHolder".equals(methodName)) {
+            return interceptorHolder;
         }
 
         if (JDBC4_METHODS.contains(methodName)) {
@@ -92,18 +91,16 @@ public class ConnectionProxyLogic {
         // most of the time, spring and hibernate use prepareStatement to execute query as batch
         if ("createStatement".equals(methodName)) {
             // for normal statement, transforming query is handled inside of handler.
-            return jdbcProxyFactory.createStatement((Statement) retVal, interceptorHolder, dataSourceName);
+            return jdbcProxyFactory.createStatement((Statement) retVal, proxy);
         } else if ("prepareStatement".equals(methodName)) {
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final String query = (String) args[0];
-                return jdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, query,
-                        interceptorHolder, dataSourceName);
+                return jdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, query, proxy);
             }
         } else if ("prepareCall".equals(methodName)) {  // for stored procedure call
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final String query = (String) args[0];
-                return jdbcProxyFactory.createCallableStatement((CallableStatement) retVal, query,
-                        interceptorHolder, dataSourceName);
+                return jdbcProxyFactory.createCallableStatement((CallableStatement) retVal, query, proxy);
             }
         }
 

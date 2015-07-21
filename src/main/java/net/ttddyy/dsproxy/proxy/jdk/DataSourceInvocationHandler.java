@@ -15,10 +15,7 @@ import java.lang.reflect.Method;
  */
 public class DataSourceInvocationHandler implements InvocationHandler {
 
-    private DataSourceProxyLogic delegate;
-
-    public DataSourceInvocationHandler() {
-    }
+    private final DataSourceProxyLogic delegate;
 
     public DataSourceInvocationHandler(DataSource dataSource, InterceptorHolder interceptorHolder, String dataSourceName,
                                        JdbcProxyFactory jdbcProxyFactory) {

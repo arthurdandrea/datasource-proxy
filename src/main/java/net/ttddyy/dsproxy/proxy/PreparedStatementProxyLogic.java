@@ -26,26 +26,23 @@ import java.util.Map;
  */
 public class PreparedStatementProxyLogic {
 
-    private PreparedStatement ps;
-    private String query;
-    private List<Integer> outParamIndexes= new ArrayList<Integer>();
-    private List<String> outParamNames= new ArrayList<String>();
-    private String dataSourceName;
+    private final PreparedStatement ps;
+    private final String query;
+    private final ConnectionProxy connectionProxy;
+    private final List<Integer> outParamIndexes= new ArrayList<Integer>();
+    private final List<String> outParamNames= new ArrayList<String>();
+    private final String dataSourceName;
     private Map<Object, ParameterSetOperation> parameters = new LinkedHashMap<Object, ParameterSetOperation>();
-    private InterceptorHolder interceptorHolder;
-    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
+    private final InterceptorHolder interceptorHolder;
 
-    private List<Map<Object, ParameterSetOperation>> batchParameters = new ArrayList<Map<Object, ParameterSetOperation>>();
+    private final List<Map<Object, ParameterSetOperation>> batchParameters = new ArrayList<Map<Object, ParameterSetOperation>>();
 
-    public PreparedStatementProxyLogic() {
-    }
-
-    public PreparedStatementProxyLogic(PreparedStatement ps, String query, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
+    public PreparedStatementProxyLogic(PreparedStatement ps, String query, ConnectionProxy connectionProxy) {
         this.ps = ps;
         this.query = query;
-        this.interceptorHolder = interceptorHolder;
-        this.dataSourceName = dataSourceName;
-        this.jdbcProxyFactory = jdbcProxyFactory;
+        this.interceptorHolder = connectionProxy.getInterceptorHolder();
+        this.dataSourceName = connectionProxy.getDataSourceName();
+        this.connectionProxy = connectionProxy;
     }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -81,8 +78,7 @@ public class PreparedStatementProxyLogic {
         }
 
         if (StatementMethodNames.GET_CONNECTION_METHOD.contains(methodName)) {
-            final Connection conn = (Connection) MethodUtils.proceedExecution(method, ps, args);
-            return jdbcProxyFactory.createConnection(conn, interceptorHolder, dataSourceName);
+            return connectionProxy;
         }
 
 

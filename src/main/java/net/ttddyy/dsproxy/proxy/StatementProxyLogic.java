@@ -34,21 +34,17 @@ public class StatementProxyLogic {
             }
     );
 
-    private Statement stmt;
-    private InterceptorHolder interceptorHolder;
-    private String dataSourceName;
-    private List<String> batchQueries = new ArrayList<String>();
-    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
+    private final Statement stmt;
+    private final ConnectionProxy connectionProxy;
+    private final InterceptorHolder interceptorHolder;
+    private final String dataSourceName;
+    private final List<String> batchQueries = new ArrayList<String>();
 
-    public StatementProxyLogic() {
-    }
-
-    public StatementProxyLogic(
-            Statement stmt, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
+    public StatementProxyLogic(Statement stmt, ConnectionProxy connectionProxy) {
         this.stmt = stmt;
-        this.interceptorHolder = interceptorHolder;
-        this.dataSourceName = dataSourceName;
-        this.jdbcProxyFactory = jdbcProxyFactory;
+        this.connectionProxy = connectionProxy;
+        interceptorHolder = connectionProxy.getInterceptorHolder();
+        dataSourceName = connectionProxy.getDataSourceName();
     }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -84,8 +80,7 @@ public class StatementProxyLogic {
         }
 
         if (StatementMethodNames.GET_CONNECTION_METHOD.contains(methodName)) {
-            final Connection conn = (Connection) MethodUtils.proceedExecution(method, stmt, args);
-            return jdbcProxyFactory.createConnection(conn, interceptorHolder, dataSourceName);
+            return connectionProxy;
         }
 
         if ("addBatch".equals(methodName) || "clearBatch".equals(methodName)) {

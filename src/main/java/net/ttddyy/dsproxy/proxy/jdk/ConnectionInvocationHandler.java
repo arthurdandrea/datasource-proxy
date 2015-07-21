@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.ConnectionProxy;
 import net.ttddyy.dsproxy.proxy.ConnectionProxyLogic;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
@@ -17,12 +18,7 @@ import java.sql.Connection;
  */
 public class ConnectionInvocationHandler implements InvocationHandler {
 
-    private ConnectionProxyLogic delegate;
-
-    public ConnectionInvocationHandler(Connection connection) {
-        final InterceptorHolder interceptorHolder = new InterceptorHolder(QueryExecutionListener.DEFAULT, QueryTransformer.DEFAULT);
-        this.delegate = new ConnectionProxyLogic(connection, interceptorHolder, "", JdbcProxyFactory.DEFAULT);
-    }
+    private final ConnectionProxyLogic delegate;
 
     public ConnectionInvocationHandler(
             Connection connection, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
@@ -30,7 +26,7 @@ public class ConnectionInvocationHandler implements InvocationHandler {
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return delegate.invoke(method, args);
+        return delegate.invoke((ConnectionProxy) proxy, method, args);
     }
 
 }
