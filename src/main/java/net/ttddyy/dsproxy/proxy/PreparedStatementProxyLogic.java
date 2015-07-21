@@ -13,10 +13,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -128,12 +125,11 @@ public class PreparedStatementProxyLogic {
 
         // query execution methods
 
-        final List<QueryInfo> queries = new ArrayList<QueryInfo>();
+        List<QueryInfo> queries;
         boolean isBatchExecution = false;
         int batchSize = 0;
 
         if (StatementMethodNames.BATCH_EXEC_METHODS.contains(methodName)) {
-
             // one query with multiple parameters
             QueryInfo queryInfo = new QueryInfo(this.query);
             for (Map<Object, ParameterSetOperation> params : batchParameters) {
@@ -141,7 +137,7 @@ public class PreparedStatementProxyLogic {
                 queryInfo.getOutParamIndexes().addAll(outParamIndexes);
                 queryInfo.getOutParamNames().addAll(outParamNames);
             }
-            queries.add(queryInfo);
+            queries = Collections.singletonList(queryInfo);
 
             batchSize = batchParameters.size();
             batchParameters.clear();
@@ -153,7 +149,9 @@ public class PreparedStatementProxyLogic {
             queryInfo.getQueryArgsList().add(getQueryParameters(parameters));
             queryInfo.getOutParamIndexes().addAll(outParamIndexes);
             queryInfo.getOutParamNames().addAll(outParamNames);
-            queries.add(queryInfo);
+            queries = Collections.singletonList(queryInfo);
+        } else {
+            queries = Collections.emptyList();
         }
 
         final QueryExecutionListener listener = interceptorHolder.getListener();

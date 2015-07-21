@@ -107,29 +107,29 @@ public class StatementProxyLogic {
         }
 
 
-        final List<QueryInfo> queries = new ArrayList<QueryInfo>();
+        List<QueryInfo> queries;
         boolean isBatchExecute = false;
         int batchSize = 0;
 
         if (StatementMethodNames.BATCH_EXEC_METHODS.contains(methodName)) {
 
+            queries = new ArrayList<QueryInfo>(batchQueries.size());
             for (String batchQuery : batchQueries) {
                 queries.add(new QueryInfo(batchQuery));
             }
             batchSize = batchQueries.size();
             batchQueries.clear();
             isBatchExecute = true;
-
-        } else if (StatementMethodNames.QUERY_EXEC_METHODS.contains(methodName)) {
-
-            if (ObjectArrayUtils.isFirstArgString(args)) {
-                final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
-                final String query = (String) args[0];
-                final TransformInfo transformInfo = new TransformInfo(Statement.class, dataSourceName, query, false, 0);
-                final String transformedQuery = queryTransformer.transformQuery(transformInfo);
-                args[0] = transformedQuery; // replace to the new query
-                queries.add(new QueryInfo(transformedQuery, null));
-            }
+            queries = Collections.unmodifiableList(queries);
+        } else if (StatementMethodNames.QUERY_EXEC_METHODS.contains(methodName) && ObjectArrayUtils.isFirstArgString(args)) {
+            final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
+            final String query = (String) args[0];
+            final TransformInfo transformInfo = new TransformInfo(Statement.class, dataSourceName, query, false, 0);
+            final String transformedQuery = queryTransformer.transformQuery(transformInfo);
+            args[0] = transformedQuery; // replace to the new query
+            queries = Collections.singletonList(new QueryInfo(transformedQuery, null));
+        } else {
+            queries = Collections.emptyList();
         }
 
         final QueryExecutionListener listener = interceptorHolder.getListener();
