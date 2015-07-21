@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy;
 
 import java.lang.reflect.Method;
 import java.sql.Statement;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Contains query execution information.
@@ -14,6 +15,7 @@ public class ExecutionInfo {
     private final Object[] methodArgs;
     private final Object result;
     private final long elapsedTime;
+    private final TimeUnit elapsedTimeUnit;
     private final Throwable throwable;
     private final StatementType statementType;
     private final boolean isSuccess;
@@ -21,11 +23,11 @@ public class ExecutionInfo {
     private final int batchSize;
     private final Statement statement;
 
-    public ExecutionInfo(String dataSourceName, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs, long elapsedTime, Object result, Throwable throwable, boolean isSuccess) {
-        this(dataSourceName, statement, isBatch, batchSize, method, methodArgs, elapsedTime, result, throwable, isSuccess, StatementType.valueOf(statement));
+    public ExecutionInfo(String dataSourceName, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs, long elapsedTime, TimeUnit elapsedTimeUnit, Object result, Throwable throwable, boolean isSuccess) {
+        this(dataSourceName, statement, isBatch, batchSize, method, methodArgs, elapsedTime, elapsedTimeUnit, result, throwable, isSuccess, StatementType.valueOf(statement));
     }
 
-    public ExecutionInfo(String dataSourceName, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs, long elapsedTime, Object result, Throwable throwable, boolean isSuccess, StatementType statementType) {
+    public ExecutionInfo(String dataSourceName, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs, long elapsedTime, TimeUnit elapsedTimeUnit, Object result, Throwable throwable, boolean isSuccess, StatementType statementType) {
         this.dataSourceName = dataSourceName;
         this.statement = statement;
         this.isBatch = isBatch;
@@ -37,8 +39,8 @@ public class ExecutionInfo {
         this.throwable = throwable;
         this.isSuccess = isSuccess;
         this.statementType = statementType;
+        this.elapsedTimeUnit = elapsedTimeUnit;
     }
-
 
     public Method getMethod() {
         return method;
@@ -58,6 +60,10 @@ public class ExecutionInfo {
 
     public long getElapsedTime() {
         return elapsedTime;
+    }
+
+    public TimeUnit getElapsedTimeUnit() {
+        return elapsedTimeUnit;
     }
 
     public Throwable getThrowable() {

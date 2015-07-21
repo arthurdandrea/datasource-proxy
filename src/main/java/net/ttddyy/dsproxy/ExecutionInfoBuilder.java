@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy;
 
 import java.lang.reflect.Method;
 import java.sql.Statement;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -13,6 +14,7 @@ public class ExecutionInfoBuilder {
     private Object[] methodArgs;
     private Object result;
     private long elapsedTime;
+    private TimeUnit elapsedTimeUnit;
     private Throwable throwable;
     private StatementType statementType;
     private boolean success;
@@ -45,8 +47,9 @@ public class ExecutionInfoBuilder {
         return this;
     }
 
-    public ExecutionInfoBuilder elapsedTime(long elapsedTime) {
+    public ExecutionInfoBuilder elapsedTime(long elapsedTime, TimeUnit timeUnit) {
         this.elapsedTime = elapsedTime;
+        elapsedTimeUnit = timeUnit;
         return this;
     }
 
@@ -83,6 +86,6 @@ public class ExecutionInfoBuilder {
 
     public ExecutionInfo build() {
         StatementType statementType = statementTypeSet ? this.statementType : StatementType.valueOf(statement);
-        return new ExecutionInfo(dataSourceName, statement, batch, batchSize, method, methodArgs, elapsedTime, result, throwable, success, statementType);
+        return new ExecutionInfo(dataSourceName, statement, batch, batchSize, method, methodArgs, elapsedTime, elapsedTimeUnit, result, throwable, success, statementType);
     }
 }

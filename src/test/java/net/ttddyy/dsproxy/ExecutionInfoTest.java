@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -22,13 +23,13 @@ public class ExecutionInfoTest {
         CallableStatement callable = mock(CallableStatement.class);
 
         ExecutionInfo executionInfo;
-        executionInfo = new ExecutionInfo("", statement, true, 0, null, null, 0, null, null, true);
+        executionInfo = new ExecutionInfo("", statement, true, 0, null, null, 0, TimeUnit.MILLISECONDS, null, null, true);
         assertThat(executionInfo.getStatementType()).isEqualTo(StatementType.STATEMENT);
 
-        executionInfo = new ExecutionInfo("", prepared, true, 0, null, null, 0, null, null, true);
+        executionInfo = new ExecutionInfo("", prepared, true, 0, null, null, 0, TimeUnit.MILLISECONDS, null, null, true);
         assertThat(executionInfo.getStatementType()).isEqualTo(StatementType.PREPARED);
 
-        executionInfo = new ExecutionInfo("", callable, true, 0, null, null, 0, null, null, true);
+        executionInfo = new ExecutionInfo("", callable, true, 0, null, null, 0, TimeUnit.MILLISECONDS, null, null, true);
         assertThat(executionInfo.getStatementType()).isEqualTo(StatementType.CALLABLE);
 
     }

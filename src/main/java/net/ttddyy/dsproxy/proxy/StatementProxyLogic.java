@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Proxy Logic implementation for {@link Statement} methods.
@@ -149,7 +150,7 @@ public class StatementProxyLogic {
                 retVal = method.invoke(stmt, args);
             } finally {
                 final long afterTime = System.currentTimeMillis();
-                execInfoBuilder.elapsedTime(afterTime - beforeTime);
+                execInfoBuilder.elapsedTime(afterTime - beforeTime, TimeUnit.MILLISECONDS);
             }
 
             execInfoBuilder.result(retVal);

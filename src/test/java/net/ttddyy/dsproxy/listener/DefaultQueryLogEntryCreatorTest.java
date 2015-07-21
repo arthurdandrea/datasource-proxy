@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +24,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .elapsedTime(100)
+                .elapsedTime(100, TimeUnit.MILLISECONDS)
                 .method(method)
                 .result(result)
                 .statementType(StatementType.STATEMENT)
@@ -51,7 +52,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .elapsedTime(100)
+                .elapsedTime(100, TimeUnit.MILLISECONDS)
                 .method(method)
                 .result(result)
                 .statementType(StatementType.STATEMENT)
@@ -80,7 +81,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .elapsedTime(100)
+                .elapsedTime(100, TimeUnit.MILLISECONDS)
                 .method(method)
                 .result(result)
                 .statementType(StatementType.PREPARED)
@@ -112,7 +113,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .elapsedTime(100)
+                .elapsedTime(100, TimeUnit.MILLISECONDS)
                 .method(method)
                 .result(result)
                 .statementType(StatementType.PREPARED)
@@ -146,7 +147,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .elapsedTime(100)
+                .elapsedTime(100, TimeUnit.MILLISECONDS)
                 .method(method)
                 .result(result)
                 .statementType(StatementType.CALLABLE)
@@ -178,7 +179,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .elapsedTime(100)
+                .elapsedTime(100, TimeUnit.MILLISECONDS)
                 .method(method)
                 .result(result)
                 .statementType(StatementType.CALLABLE)
@@ -212,7 +213,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .elapsedTime(100)
+                .elapsedTime(100, TimeUnit.MILLISECONDS)
                 .method(method)
                 .result(result)
                 .statementType(StatementType.PREPARED)
@@ -248,7 +249,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .elapsedTime(100)
+                .elapsedTime(100, TimeUnit.MILLISECONDS)
                 .method(method)
                 .result(result)
                 .statementType(StatementType.CALLABLE)

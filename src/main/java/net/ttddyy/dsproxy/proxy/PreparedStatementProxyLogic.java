@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Shared logic for {@link PreparedStatement} and {@link CallableStatement} invocation.
@@ -173,7 +174,7 @@ public class PreparedStatementProxyLogic {
                 retVal = method.invoke(ps, args);
             } finally {
                 final long afterTime = System.currentTimeMillis();
-                execInfoBuilder.elapsedTime(afterTime - beforeTime);
+                execInfoBuilder.elapsedTime(afterTime - beforeTime, TimeUnit.MILLISECONDS);
             }
 
             execInfoBuilder.result(retVal);
